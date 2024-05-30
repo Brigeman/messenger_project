@@ -1,0 +1,17 @@
+<!-- chat/templates/chat/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger</title>
+</head>
+<body>
+    <div id="chat-container">
+        <ul id="messages"></ul>
+        <input id="message-input" type="text" placeholder="Type a message...">
+        <button id="send-button">Send</button>
+    </div>
+    <script src="{% static 'chat/main.js' %}"></script>
+</body>
+</html>
