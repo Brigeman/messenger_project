@@ -1,4 +1,4 @@
-const chatId = 1; // Пример идентификатора чата
+const chatId = 1; 
 const socket = new WebSocket(`ws://${window.location.host}/ws/chat/${chatId}/`);
 
 socket.onmessage = function(e) {
@@ -6,7 +6,7 @@ socket.onmessage = function(e) {
     const message = data.message;
     const messages = document.getElementById('messages');
     const messageElement = document.createElement('li');
-    messageElement.textContent = message;
+    messageElement.textContent = `${message.author}: ${message.content} (${message.timestamp})`;
     messages.appendChild(messageElement);
 };
 

@@ -44,7 +44,9 @@ ROOT_URLCONF = "messenger_project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            BASE_DIR / "templates"
+        ],  # Проверьте, что тут указан путь к папке templates
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -62,9 +64,13 @@ ASGI_APPLICATION = "messenger_project.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
     },
 }
+
 
 # Настройки для медиа файлов
 MEDIA_URL = "/media/"
