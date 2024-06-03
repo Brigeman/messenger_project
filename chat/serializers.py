@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ["avatar"]  # Добавьте другие поля, если необходимо
+        fields = ["avatar"]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,7 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance = super().update(instance, validated_data)
 
-        # Получение и обновление профиля пользователя
         profile = instance.profile
         if avatar:
             profile.avatar = avatar
