@@ -1,13 +1,17 @@
-const chatId = 1; 
-const socket = new WebSocket(`ws://${window.location.host}/ws/chat/${chatId}/`);
+const chatId = 1;
+const socket = new WebSocket(`ws://<span class="math-inline">\{window\.location\.host\}/ws/chat/</span>{chatId}/`);
 
 socket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    const message = data.message;
-    const messages = document.getElementById('messages');
-    const messageElement = document.createElement('li');
-    messageElement.textContent = `${message.author}: ${message.content} (${message.timestamp})`;
-    messages.appendChild(messageElement);
+    if (data.message) {  // Check if message property exists
+        const message = data.message;
+        const messages = document.getElementById('messages');
+        const messageElement = document.createElement('li');
+        messageElement.textContent = `${message}: <span class="math-inline">\{message\.content\} \(</span>{message.timestamp})`;
+        messages.appendChild(messageElement);
+    } else {
+        console.error('Received unexpected data from server');
+    }
 };
 
 socket.onclose = function(e) {
