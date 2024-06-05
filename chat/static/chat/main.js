@@ -1,28 +1,28 @@
-const chatId = 1;
-const socket = new WebSocket(`ws://<span class="math-inline">\{window\.location\.host\}/ws/chat/</span>{chatId}/`);
+const roomName = "1";  // пример имени комнаты
+const chatSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/chat/' + roomName + '/');
 
-socket.onmessage = function(e) {
+chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    if (data.message) {  // Check if message property exists
-        const message = data.message;
-        const messages = document.getElementById('messages');
-        const messageElement = document.createElement('li');
-        messageElement.textContent = `${message}: <span class="math-inline">\{message\.content\} \(</span>{message.timestamp})`;
-        messages.appendChild(messageElement);
-    } else {
-        console.error('Received unexpected data from server');
-    }
+    document.querySelector('#chat-log').innerHTML += (data.message + '<br>');
 };
 
-socket.onclose = function(e) {
+chatSocket.onclose = function(e) {
     console.error('Chat socket closed unexpectedly');
 };
 
-document.getElementById('send-button').onclick = function() {
-    const input = document.getElementById('message-input');
-    const message = input.value;
-    socket.send(JSON.stringify({
+document.querySelector('#chat-message-input').focus();
+document.querySelector('#chat-message-input').onkeyup = function(e) {
+    if (e.keyCode === 13) {  // Enter key
+        document.querySelector('#chat-message-submit').click();
+    }
+};
+
+document.querySelector('#chat-message-submit').onclick = function(e) {
+    const messageInputDom = document.querySelector('#chat-message-input');
+    const message = messageInputDom.value;
+    chatSocket.send(JSON.stringify({
         'message': message
     }));
-    input.value = '';
+    messageInputDom.value = '';
 };
