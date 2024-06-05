@@ -6,9 +6,9 @@ from .views import (
     UserViewSet,
     signup,
     login_view,
-    index,
     edit_profile,
     user_list,
+    index,
 )
 
 router = DefaultRouter()
@@ -19,9 +19,8 @@ router.register(r"users", UserViewSet)
 urlpatterns = [
     path("signup/", signup, name="signup"),
     path("login/", login_view, name="login"),
-    path("", index, name="home"),
-    path("chat/<str:room_name>/", index, name="chat_room"),
     path("edit_profile/", edit_profile, name="edit_profile"),
     path("user_list/", user_list, name="user_list"),
     path("api/", include(router.urls)),
+    path("<str:room_name>/", index, name="chat_room"),
 ]

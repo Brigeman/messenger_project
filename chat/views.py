@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from .models import Chat, Message
+from .models import Chat, Message, Profile
 from .serializers import ChatSerializer, MessageSerializer, UserSerializer
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, UserEditForm
@@ -63,19 +63,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 @login_required
-def index(request, room_name):
-    return render(request, "chat/index.html", {"room_name": room_name})
+def index(request, room_name=None):
+    user_profile = Profile.objects.get(user=request.user)
+    return render(
+        request, "chat/index.html", {"profile": user_profile, "room_name": room_name}
+    )
 
 
 @login_required
 def edit_profile(request):
     if request.method == "POST":
-        form = UserEditForm(request.POST, request.FILES, instance=request.user)
+        form = UserEditForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
-            return redirect("index")
+            return redirect("home")
     else:
-        form = UserEditForm(instance=request.user)
+        form = UserEditForm(instance=request.user.profile)
     return render(request, "chat/edit_profile.html", {"form": form})
 
 

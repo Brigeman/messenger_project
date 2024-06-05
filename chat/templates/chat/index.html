@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat Room: {{ room_name }}</title>
+    <title>Chat Room</title>
 </head>
 <body>
-    <h2>Chat Room: {{ room_name }}</h2>
+    <h2>Chat Room</h2>
+    <nav>
+        <ul>
+            <li><a href="{% url 'chat_room' 'room1' %}">Room 1</a></li>
+            <li><a href="{% url 'chat_room' 'room2' %}">Room 2</a></li>
+            <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
+            <li><a href="{% url 'user_list' %}">User List</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
     <div id="chat-log"></div>
     <input id="chat-message-input" type="text" size="100">
     <input id="chat-message-submit" type="button" value="Send">
 
     <script>
-        const roomName = "{{ room_name }}";
+        const roomName = "{{ room_name }}";  // Используйте динамическое значение для имени комнаты
         const chatSocket = new WebSocket(
             'ws://' + window.location.host + '/ws/chat/' + roomName + '/');
 
