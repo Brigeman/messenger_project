@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "first_name", "last_name", "email", "profile"]
+        fields = ["__all__"]
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop("profile", {})
@@ -35,7 +35,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ["id", "chat", "author", "content", "timestamp"]
+        fields = ["__all__"]
 
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -44,4 +44,4 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ["id", "name", "members", "messages"]
+        fields = ["__all__"]
