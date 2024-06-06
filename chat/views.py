@@ -1,42 +1,29 @@
 from rest_framework import viewsets
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Chat, Message, Profile
 from .serializers import ChatSerializer, MessageSerializer, UserSerializer
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, UserEditForm
+from .forms import UserEditForm
 
 
 def signup(request):
     if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect("home")
-    else:
-        form = SignUpForm()
-    return render(request, "chat/signup.html", {"form": form})
-
-
-def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            if user is not None:
+        username = request.POST.get("username")
+        if username:
+            # Проверяем, существует ли пользователь с таким именем
+            user, created = User.objects.get_or_create(username=username)
+            if created:
+                # Если пользователь новый, создаем профиль
+                Profile.objects.create(user=user)
                 login(request, user)
-                return redirect("home")
-    else:
-        form = AuthenticationForm()
-    return render(request, "registration/login.html", {"form": form})
+                return redirect("index")
+            else:
+                # Если пользователь уже существует, логиним его
+                login(request, user)
+                return redirect("index")
+    return render(request, "chat/signup.html")
 
 
 class ChatViewSet(viewsets.ModelViewSet):
@@ -63,7 +50,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 @login_required
-def index(request, room_name=None):
+def index(request, room_name="default_room"):
     user_profile = Profile.objects.get(user=request.user)
     return render(
         request, "chat/index.html", {"profile": user_profile, "room_name": room_name}
@@ -76,7 +63,7 @@ def edit_profile(request):
         form = UserEditForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
-            return redirect("home")
+            return redirect("index")
     else:
         form = UserEditForm(instance=request.user.profile)
     return render(request, "chat/edit_profile.html", {"form": form})

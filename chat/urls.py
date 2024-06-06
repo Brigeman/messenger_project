@@ -5,7 +5,6 @@ from .views import (
     MessageViewSet,
     UserViewSet,
     signup,
-    login_view,
     edit_profile,
     user_list,
     index,
@@ -18,7 +17,6 @@ router.register(r"users", UserViewSet)
 
 urlpatterns = [
     path("signup/", signup, name="signup"),
-    path("login/", login_view, name="login"),
     path("edit_profile/", edit_profile, name="edit_profile"),
     path("user_list/", user_list, name="user_list"),
     path("api/", include(router.urls)),

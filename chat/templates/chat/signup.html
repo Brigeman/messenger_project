@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sign Up</title>
+    <title>Signup</title>
 </head>
 <body>
-    <h2>Sign Up</h2>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
-            <li><a href="{% url 'user_list' %}">User List</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-        </ul>
-    </nav>
+    <h1>Signup</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign Up</button>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required>
+        <button type="submit">Signup</button>
     </form>
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
 </body>
 </html>
