@@ -23,4 +23,5 @@ urlpatterns = [
     path("user_list/", user_list, name="user_list"),
     path("api/", include(router.urls)),
     path("<str:room_name>/", index, name="chat_room"),
+    path("", index, name="index"),
 ]
