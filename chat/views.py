@@ -5,22 +5,23 @@ from django.contrib.auth.decorators import login_required
 from .models import Chat, Message, Profile
 from .serializers import ChatSerializer, MessageSerializer, UserSerializer
 from django.shortcuts import render, redirect
-from .forms import UserEditForm
+from .forms import UserEditForm, UsernameAuthenticationForm
 
 
 def signup(request):
     if request.method == "POST":
         username = request.POST.get("username")
         if username:
-            # Проверяем, существует ли пользователь с таким именем
-            user, created = User.objects.get_or_create(username=username)
-            if created:
-                # Если пользователь новый, создаем профиль
-                Profile.objects.create(user=user)
-                login(request, user)
-                return redirect("index")
+            user_exists = User.objects.filter(username=username).exists()
+            if user_exists:
+                return render(
+                    request,
+                    "chat/signup.html",
+                    {"error_message": "Username already exists."},
+                )
             else:
-                # Если пользователь уже существует, логиним его
+                user = User.objects.create(username=username)
+                Profile.objects.create(user=user)
                 login(request, user)
                 return redirect("index")
     return render(request, "chat/signup.html")
@@ -47,6 +48,19 @@ class MessageViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+def login_view(request):
+    if request.method == "POST":
+        form = UsernameAuthenticationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            user = User.objects.get(username=username)
+            login(request, user)
+            return redirect("index")
+    else:
+        form = UsernameAuthenticationForm()
+    return render(request, "chat/login.html", {"form": form})
 
 
 @login_required

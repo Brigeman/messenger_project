@@ -137,14 +137,24 @@ LOGGING = {
     "disable_existing_loggers": False,
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "WARNING",  # Устанавливаем уровень WARNING для handler
             "class": "logging.StreamHandler",
         },
     },
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "WARNING",  # Устанавливаем уровень WARNING для логгера Django
+        },
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "ERROR",  # Устанавливаем уровень ERROR для логгера баз данных
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",  # Устанавливаем уровень ERROR для логгера запросов
+            "propagate": False,
         },
     },
 }
