@@ -10,6 +10,7 @@ from .views import (
     user_list,
     index,
     login_view,
+    private_chat,
 )
 
 router = DefaultRouter()
@@ -23,6 +24,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
     path("edit_profile/", edit_profile, name="edit_profile"),
     path("user_list/", user_list, name="user_list"),
+    path("private_chat/<int:user_id>/", private_chat, name="private_chat"),
     path("api/", include(router.urls)),
     path("<str:room_name>/", index, name="chat_room"),
     path("", index, name="index"),

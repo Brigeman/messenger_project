@@ -147,7 +147,7 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "CRITICAL",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
@@ -155,7 +155,7 @@ LOGGING = {
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "CRITICAL",
             "propagate": True,
         },
         "chat": {
