@@ -135,26 +135,33 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
-            "level": "WARNING",  # Устанавливаем уровень WARNING для handler
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "WARNING",  # Устанавливаем уровень WARNING для логгера Django
+            "level": "DEBUG",
+            "propagate": True,
         },
-        "django.db.backends": {
+        "chat": {
             "handlers": ["console"],
-            "level": "ERROR",  # Устанавливаем уровень ERROR для логгера баз данных
-            "propagate": False,
-        },
-        "django.request": {
-            "handlers": ["console"],
-            "level": "ERROR",  # Устанавливаем уровень ERROR для логгера запросов
-            "propagate": False,
+            "level": "DEBUG",
+            "propagate": True,
         },
     },
 }

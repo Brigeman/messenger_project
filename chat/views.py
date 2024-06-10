@@ -21,7 +21,9 @@ def signup(request):
                 )
             else:
                 user = User.objects.create(username=username)
-                Profile.objects.create(user=user)
+                # Проверяем, существует ли профиль для пользователя
+                if not Profile.objects.filter(user=user).exists():
+                    Profile.objects.create(user=user)
                 login(request, user)
                 return redirect("index")
     return render(request, "chat/signup.html")
