@@ -1,3 +1,3 @@
 from django.test import TestCase
 
-# Create your tests here.
+# TODO check API's after group chats, please

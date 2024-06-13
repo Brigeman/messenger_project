@@ -1,4 +1,4 @@
-const roomName = "1";  // пример имени комнаты
+const roomName = "1";  // room name
 const chatSocket = new WebSocket(
     'ws://' + window.location.host + '/ws/chat/' + roomName + '/');
 
