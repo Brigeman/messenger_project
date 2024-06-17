@@ -1,5 +1,10 @@
 from pathlib import Path
 import os
+import logging
+
+# Настроим логирование
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -71,7 +76,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-
 # Настройки для медиа файлов
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -135,33 +139,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
     "handlers": {
         "console": {
-            "level": "CRITICAL",
+            "level": "INFO",
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
         },
     },
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "CRITICAL",
-            "propagate": True,
-        },
-        "chat": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": True,
+            "level": "INFO",
         },
     },
 }
