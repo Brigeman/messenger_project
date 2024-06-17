@@ -5,7 +5,12 @@ from django.contrib.auth.decorators import login_required
 from .models import Chat, Message, Profile
 from .serializers import ChatSerializer, MessageSerializer, UserSerializer
 from django.shortcuts import render, redirect
-from .forms import UserEditForm, UsernameAuthenticationForm
+from .forms import (
+    UserEditForm,
+    UsernameAuthenticationForm,
+    GroupChatForm,
+    AddUserToGroupForm,
+)
 from django.shortcuts import get_object_or_404
 import logging
 
@@ -116,3 +121,37 @@ def private_chat(request, user_id):
         other_user.username,
     )
     return render(request, "chat/private_chat.html", {"other_user": other_user})
+
+
+@login_required
+def create_group_chat(request):
+    if request.method == "POST":
+        form = GroupChatForm(request.POST)
+        if form.is_valid():
+            group_chat = form.save(commit=False)
+            group_chat.is_group = True
+            group_chat.save()
+            group_chat.members.add(request.user)
+            return redirect("add_users_to_group", group_chat_id=group_chat.id)
+    else:
+        form = GroupChatForm()
+    return render(request, "chat/create_group_chat.html", {"form": form})
+
+
+@login_required
+def add_users_to_group(request, group_chat_id):
+    group_chat = Chat.objects.get(id=group_chat_id)
+    if request.method == "POST":
+        form = AddUserToGroupForm(request.POST)
+        if form.is_valid():
+            users = form.cleaned_data["users"]
+            for user in users:
+                group_chat.members.add(user)
+            return redirect("chat_room", room_name=group_chat.name)
+    else:
+        form = AddUserToGroupForm()
+    return render(
+        request,
+        "chat/add_users_to_group.html",
+        {"form": form, "group_chat": group_chat},
+    )
