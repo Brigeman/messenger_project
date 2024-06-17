@@ -18,7 +18,11 @@
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').value += (data.message + '\n');
+        // Используем innerHTML или создаем новый элемент для добавления сообщений
+        const chatLog = document.querySelector('#chat-log');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = data.message;
+        chatLog.appendChild(messageElement);
     };
 
     chatSocket.onclose = function(e) {
