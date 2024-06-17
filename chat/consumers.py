@@ -50,8 +50,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
-        self.room_name = f'private_chat_{self.user_id}_{self.scope["user"].id}'
+        self.user_id = int(self.scope["url_route"]["kwargs"]["user_id"])
+        self.room_name = f'private_chat_{min(self.user_id, self.scope["user"].id)}_{max(self.user_id, self.scope["user"].id)}'
         self.room_group_name = f"chat_{self.room_name}"
 
         logger.debug(f"Connecting to private chat room: {self.room_group_name}")
@@ -67,7 +67,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         logger.debug(
             f"Disconnecting from private chat room: {self.room_group_name}, code: {close_code}"
         )
-
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
