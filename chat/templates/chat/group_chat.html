@@ -2,46 +2,61 @@
 <html>
 <head>
     <title>Group Chat</title>
-    <script>
-        const roomName = "{{ room_name }}";
-        const userId = "{{ user.id }}";
-        
-        const chatSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/chat/group/' + roomName + '/'
-        );
-
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.user + ': ' + data.message + '\n');
-        };
-
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // Enter key
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'user': userId
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #chat-log {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        #message-input {
+            width: 80%;
+        }
+        #send-button {
+            width: 18%;
+        }
+    </style>
 </head>
 <body>
-    <h2>Group Chat: {{ room_name }}</h2>
-    <textarea id="chat-log" cols="100" rows="20" readonly></textarea>
-    <br>
-    <input id="chat-message-input" type="text" size="100">
-    <input id="chat-message-submit" type="button" value="Send">
+    <h1>Group Chat: {{ room_name }}</h1>
+    <div id="chat-log"></div>
+    <form id="chat-form" method="post">
+        {% csrf_token %}
+        <input id="message-input" type="text" size="100" autofocus placeholder="Type your message here..." />
+        <button type="submit" id="send-button">Send</button>
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roomName = "{{ room_name }}";
+            const chatSocket = new WebSocket(
+                'ws://' + window.location.host + '/ws/chat/group/' + roomName + '/'
+            );
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                document.querySelector('#chat-log').innerHTML += '<div>' + data.message + '</div>';
+            };
+
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            const chatForm = document.querySelector('#chat-form');
+            if (chatForm) {
+                chatForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    const messageInputDom = document.querySelector('#message-input');
+                    const message = messageInputDom.value;
+                    chatSocket.send(JSON.stringify({
+                        'message': message
+                    }));
+                    messageInputDom.value = '';
+                };
+            }
+        });
+    </script>
 </body>
 </html>
