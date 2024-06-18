@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Users to Group</title>
-</head>
-<body>
-    <h2>Add Users to Group: {{ group_chat.name }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Users</button>
-    </form>
-</body>
-</html>
+{% extends "chat/index.html" %}
+
+{% block title %}Add Users to Group{% endblock %}
+{% block header %}Add Users to Group: {{ group_chat.name }}{% endblock %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Users</button>
+</form>
+{% endblock %}
