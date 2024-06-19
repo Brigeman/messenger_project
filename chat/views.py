@@ -1,3 +1,4 @@
+# Импортируем библиотеки и настроим логирование
 from rest_framework import viewsets
 from django.contrib.auth.models import User
 from django.contrib.auth import login
@@ -17,13 +18,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# Определим функции и добавим логирование в нужных местах
 def signup(request):
     if request.method == "POST":
         username = request.POST.get("username")
         if username:
             user_exists = User.objects.filter(username=username).exists()
             if user_exists:
-                logger.debug("Username already exists: %s", username)
+                logger.info(f"Signup attempt with existing username: {username}")
                 return render(
                     request,
                     "chat/signup.html",
@@ -31,17 +33,18 @@ def signup(request):
                 )
             else:
                 user = User.objects.create(username=username)
-                logger.debug("Created new user: %s", username)
+                logger.info(f"New user created: {username}")
                 # Проверяем, существует ли профиль для пользователя
                 if not Profile.objects.filter(user=user).exists():
                     Profile.objects.create(user=user)
-                    logger.debug("Created profile for user: %s", username)
+                    logger.info(f"Profile created for user: {username}")
                 login(request, user)
-                logger.debug("User logged in: %s", username)
+                logger.info(f"User logged in: {username}")
                 return redirect("index")
     return render(request, "chat/signup.html")
 
 
+# Определим остальные классы и функции, добавив нужное логирование
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
@@ -50,7 +53,7 @@ class ChatViewSet(viewsets.ModelViewSet):
         chat = serializer.save()
         chat.members.add(self.request.user)
         chat.save()
-        logger.debug("Created new chat: %s", chat.id)
+        logger.info(f"New chat created by user {self.request.user}: {chat.id}")
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -59,7 +62,9 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        logger.debug("Created new message: %s", serializer.instance.id)
+        logger.info(
+            f"New message created by user {self.request.user}: {serializer.instance.id}"
+        )
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -74,7 +79,7 @@ def login_view(request):
             username = form.cleaned_data["username"]
             user = User.objects.get(username=username)
             login(request, user)
-            logger.debug("User logged in: %s", username)
+            logger.info(f"User logged in: {username}")
             return redirect("index")
     else:
         form = UsernameAuthenticationForm()
@@ -84,8 +89,8 @@ def login_view(request):
 @login_required
 def index(request, room_name="default_room"):
     user_profile = Profile.objects.get(user=request.user)
-    logger.debug(
-        "Rendering index for user: %s in room: %s", request.user.username, room_name
+    logger.info(
+        f"Rendering index for user: {request.user.username} in room: {room_name}"
     )
     return render(
         request, "chat/index.html", {"profile": user_profile, "room_name": room_name}
@@ -98,7 +103,7 @@ def edit_profile(request):
         form = UserEditForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
-            logger.debug("Profile updated for user: %s", request.user.username)
+            logger.info(f"Profile updated for user: {request.user.username}")
             return redirect("index")
     else:
         form = UserEditForm(instance=request.user.profile)
@@ -108,17 +113,15 @@ def edit_profile(request):
 @login_required
 def user_list(request):
     users = User.objects.exclude(id=request.user.id)
-    logger.debug("Rendering user list for user: %s", request.user.username)
+    logger.info(f"Rendering user list for user: {request.user.username}")
     return render(request, "chat/user_list.html", {"users": users})
 
 
 @login_required
 def private_chat(request, user_id):
     other_user = get_object_or_404(User, id=user_id)
-    logger.debug(
-        "Rendering private chat between user: %s and user: %s",
-        request.user.username,
-        other_user.username,
+    logger.info(
+        f"Rendering private chat between user: {request.user.username} and user: {other_user.username}"
     )
     return render(request, "chat/private_chat.html", {"other_user": other_user})
 
@@ -132,6 +135,7 @@ def create_group_chat(request):
             group_chat.is_group = True
             group_chat.save()
             group_chat.members.add(request.user)
+            logger.info(f"Group chat created by user: {request.user.username}")
             return redirect("add_users_to_group", group_chat_id=group_chat.id)
     else:
         form = GroupChatForm()
@@ -147,6 +151,9 @@ def add_users_to_group(request, group_chat_id):
             users = form.cleaned_data["users"]
             for user in users:
                 group_chat.members.add(user)
+            logger.info(
+                f"Users added to group chat {group_chat.name} by {request.user.username}"
+            )
             return redirect("chat_room", room_name=group_chat.name)
     else:
         form = AddUserToGroupForm()
@@ -154,4 +161,17 @@ def add_users_to_group(request, group_chat_id):
         request,
         "chat/add_users_to_group.html",
         {"form": form, "group_chat": group_chat},
+    )
+
+
+@login_required
+def group_chat_view(request, room_name):
+    user_profile = Profile.objects.get(user=request.user)
+    logger.info(
+        f"Rendering group chat for user: {request.user.username} in room: {room_name}"
+    )
+    return render(
+        request,
+        "chat/group_chat.html",
+        {"profile": user_profile, "room_name": room_name},
     )

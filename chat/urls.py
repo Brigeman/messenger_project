@@ -13,6 +13,7 @@ from .views import (
     private_chat,
     create_group_chat,
     add_users_to_group,
+    group_chat_view,
 )
 
 router = DefaultRouter()
@@ -33,6 +34,7 @@ urlpatterns = [
         add_users_to_group,
         name="add_users_to_group",
     ),
+    path("chat/group/<str:room_name>/", group_chat_view, name="group_chat"),
     path("api/", include(router.urls)),
     path("<str:room_name>/", index, name="chat_room"),
     path("", index, name="index"),

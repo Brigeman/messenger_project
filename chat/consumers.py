@@ -76,12 +76,20 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
-        logger.debug(f"Message received in private chat: {message}")
+        logger.debug(
+            f"Message received in private chat: {message} from user {self.scope['user'].username}"
+        )
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            self.room_group_name,
+            {
+                "type": "chat_message",
+                "message": message,
+                "sender": self.scope["user"].username,
+            },
         )
 
     async def chat_message(self, event):
         message = event["message"]
-        logger.debug(f"Sending message in private chat: {message}")
-        await self.send(text_data=json.dumps({"message": message}))
+        sender = event["sender"]
+        logger.debug(f"Sending message in private chat: {message} from {sender}")
+        await self.send(text_data=json.dumps({"message": message, "sender": sender}))
