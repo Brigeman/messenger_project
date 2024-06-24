@@ -14,6 +14,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
 
+        # Проверяем, является ли комната групповой
         self.is_group = await self.is_group_chat()
 
         logger.debug(

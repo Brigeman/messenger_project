@@ -90,9 +90,21 @@ def index(request, room_name="default_room"):
     logger.info(
         f"Rendering index for user: {request.user.username} in room: {room_name}"
     )
-    return render(
-        request, "chat/index.html", {"profile": user_profile, "room_name": room_name}
-    )
+
+    # Проверка на групповую комнату
+    chat = Chat.objects.filter(name=room_name).first()
+    if chat and chat.is_group:
+        context = {"profile": user_profile, "room_name": room_name}
+    else:
+        # Это частный чат
+        other_user = User.objects.filter(username=room_name).first()
+        context = {
+            "profile": user_profile,
+            "room_name": room_name,
+            "other_user": other_user,
+        }
+
+    return render(request, "chat/index.html", context)
 
 
 @login_required
