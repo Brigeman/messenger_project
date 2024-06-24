@@ -36,6 +36,5 @@ urlpatterns = [
     ),
     path("chat/group/<str:room_name>/", group_chat_view, name="group_chat"),
     path("api/", include(router.urls)),
-    path("<str:room_name>/", index, name="chat_room"),
     path("", index, name="index"),
 ]

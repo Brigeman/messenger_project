@@ -15,7 +15,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f"chat_{self.room_name}"
 
         # Проверяем, является ли комната групповой
-        self.is_group = await self.is_group_chat()
+        try:
+            self.is_group = await self.is_group_chat()
+        except Chat.DoesNotExist:
+            logger.error(f"Chat with name {self.room_name} does not exist.")
+            await self.close()
+            return
+        except Chat.MultipleObjectsReturned:
+            logger.error(f"Multiple chats with name {self.room_name} found.")
+            await self.close()
+            return
 
         logger.debug(
             f"Connecting to room: {self.room_group_name} (Group: {self.is_group})"
@@ -46,11 +55,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def is_group_chat(self):
-        try:
-            chat = Chat.objects.get(name=self.room_name)
-            return chat.is_group
-        except Chat.DoesNotExist:
-            return False
+        chat = Chat.objects.get(name=self.room_name)
+        return chat.is_group
 
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):

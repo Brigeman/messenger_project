@@ -85,26 +85,10 @@ def login_view(request):
 
 
 @login_required
-def index(request, room_name="default_room"):
+def index(request):
     user_profile = Profile.objects.get(user=request.user)
-    logger.info(
-        f"Rendering index for user: {request.user.username} in room: {room_name}"
-    )
-
-    # Проверка на групповую комнату
-    chat = Chat.objects.filter(name=room_name).first()
-    if chat and chat.is_group:
-        context = {"profile": user_profile, "room_name": room_name}
-    else:
-        # Это частный чат
-        other_user = User.objects.filter(username=room_name).first()
-        context = {
-            "profile": user_profile,
-            "room_name": room_name,
-            "other_user": other_user,
-        }
-
-    return render(request, "chat/index.html", context)
+    logger.info(f"Rendering index for user: {request.user.username}")
+    return render(request, "chat/index.html", {"profile": user_profile})
 
 
 @login_required
@@ -164,7 +148,9 @@ def add_users_to_group(request, group_chat_id):
             logger.info(
                 f"Users added to group chat {group_chat.name} by {request.user.username}"
             )
-            return redirect("chat_room", room_name=group_chat.name)
+            return redirect(
+                "group_chat", room_name=group_chat.name
+            )  # Изменено на group_chat
     else:
         form = AddUserToGroupForm()
     return render(

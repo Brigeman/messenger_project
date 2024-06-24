@@ -5,9 +5,11 @@ from django.dispatch import receiver
 
 
 class Chat(models.Model):
-    name = models.CharField(max_length=255)
-    members = models.ManyToManyField(User)
+    name = models.CharField(
+        max_length=255, unique=True
+    )  # Добавлено ограничение уникальности
     is_group = models.BooleanField(default=False)
+    members = models.ManyToManyField(User, related_name="chats")
 
     def __str__(self):
         return self.name

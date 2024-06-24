@@ -7,6 +7,6 @@ from chat.views import index, login_view
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("chat/", include("chat.urls")),
-    path("accounts/login/", login_view, name="login"),
+    # path("accounts/login/", login_view, name="login"),
     path("", index, name="home"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
