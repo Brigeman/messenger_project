@@ -1,4 +1,3 @@
-# Импортируем библиотеки и настроим логирование
 from rest_framework import viewsets
 from django.contrib.auth.models import User
 from django.contrib.auth import login
@@ -18,7 +17,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# Определим функции и добавим логирование в нужных местах
 def signup(request):
     if request.method == "POST":
         username = request.POST.get("username")
