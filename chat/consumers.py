@@ -1,9 +1,10 @@
+from datetime import datetime
 import logging
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
-from .models import Chat
+from .models import Chat, Message
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -44,19 +45,45 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
         logger.debug(f"Message received: {message}")
+
+        # Сохранение сообщения в базу данных
+        chat = await self.get_chat()
+        author = self.scope["user"]
+        await self.create_message(chat, author, message)
+
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            self.room_group_name,
+            {
+                "type": "chat_message",
+                "message": message,
+                "author": author.username,
+                "timestamp": str(datetime.datetime.now()),
+            },
         )
 
     async def chat_message(self, event):
         message = event["message"]
+        author = event["author"]
+        timestamp = event["timestamp"]
         logger.debug(f"Sending message: {message}")
-        await self.send(text_data=json.dumps({"message": message}))
+        await self.send(
+            text_data=json.dumps(
+                {"message": message, "author": author, "timestamp": timestamp}
+            )
+        )
 
     @database_sync_to_async
     def is_group_chat(self):
         chat = Chat.objects.get(name=self.room_name)
         return chat.is_group
+
+    @database_sync_to_async
+    def get_chat(self):
+        return Chat.objects.get(name=self.room_name)
+
+    @database_sync_to_async
+    def create_message(self, chat, author, message):
+        return Message.objects.create(chat=chat, author=author, content=message)
 
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
