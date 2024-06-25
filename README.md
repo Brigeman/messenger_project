@@ -63,7 +63,7 @@ This is a chat messenger project built with Django and Django Channels. It suppo
    Daphne is an HTTP, HTTP2, and WebSocket protocol server for ASGI and ASGI-HTTP, which will handle the WebSocket connections.
 
    ```bash
-   daphne -p 8000 chat_messenger.asgi:application
+   daphne -p 8000 messenger_project.asgi:application
    ```
 
 8. **Access the application:**
