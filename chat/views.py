@@ -32,7 +32,7 @@ def signup(request):
             else:
                 user = User.objects.create(username=username)
                 logger.info(f"New user created: {username}")
-                # Проверяем, существует ли профиль для пользователя
+                # check profile
                 if not Profile.objects.filter(user=user).exists():
                     Profile.objects.create(user=user)
                     logger.info(f"Profile created for user: {username}")
@@ -42,7 +42,7 @@ def signup(request):
     return render(request, "chat/signup.html")
 
 
-# Определим остальные классы и функции, добавив нужное логирование
+# TODO log
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
@@ -150,9 +150,7 @@ def add_users_to_group(request, group_chat_id):
             logger.info(
                 f"Users added to group chat {group_chat.name} by {request.user.username}"
             )
-            return redirect(
-                "group_chat", room_name=group_chat.name
-            )  # Изменено на group_chat
+            return redirect("group_chat", room_name=group_chat.name)
     else:
         form = AddUserToGroupForm()
     return render(

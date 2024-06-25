@@ -5,9 +5,7 @@ from django.dispatch import receiver
 
 
 class Chat(models.Model):
-    name = models.CharField(
-        max_length=255, unique=True
-    )  # Добавлено ограничение уникальности
+    name = models.CharField(max_length=255, unique=True)  # check unique
     is_group = models.BooleanField(default=False)
     members = models.ManyToManyField(User, related_name="chats")
 

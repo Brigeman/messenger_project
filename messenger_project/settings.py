@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 import logging
 
-# Настроим логирование
+# log
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -49,9 +49,7 @@ ROOT_URLCONF = "messenger_project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "templates"
-        ],  # Проверьте, что тут указан путь к папке templates
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -64,7 +62,7 @@ TEMPLATES = [
     },
 ]
 
-# Настройки для Channels
+# set up Channels
 ASGI_APPLICATION = "messenger_project.asgi.application"
 
 CHANNEL_LAYERS = {
@@ -76,11 +74,11 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Настройки для медиа файлов
+# set up for ava
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# Настройки для статических файлов
+# staticfiles
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "chat/static"),
@@ -141,7 +139,7 @@ LOGOUT_REDIRECT_URL = "/login/"
 LOGIN_URL = "/login/"
 
 
-# Логирование
+# log
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

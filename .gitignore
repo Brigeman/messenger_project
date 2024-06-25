@@ -1,5 +1,7 @@
 # Backend
 db.sqlite3
+db_backup.sqlite3
+dump.rdb
 
 .env
 
@@ -16,3 +18,5 @@ venv/
 .DS_Store
 
 /staticfiles/
+
+/media/

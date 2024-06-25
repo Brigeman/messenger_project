@@ -15,7 +15,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
 
-        # Проверяем, является ли комната групповой
+        # check is group
         try:
             self.is_group = await self.is_group_chat()
         except Chat.DoesNotExist:
@@ -46,7 +46,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json["message"]
         logger.debug(f"Message received: {message}")
 
-        # Сохранение сообщения в базу данных
+        # save in bd
         chat = await self.get_chat()
         author = self.scope["user"]
         await self.create_message(chat, author, message)
