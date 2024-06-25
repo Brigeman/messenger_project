@@ -23,11 +23,12 @@ class GroupChatForm(forms.ModelForm):
     class Meta:
         model = Chat
         fields = ["name"]
-        widgets = {
-            "name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Group Chat Name"}
-            )
-        }
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if Chat.objects.filter(name=name).exists():
+            raise forms.ValidationError("Chat with this name already exists.")
+        return name
 
 
 class AddUserToGroupForm(forms.Form):

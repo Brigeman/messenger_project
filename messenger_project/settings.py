@@ -135,6 +135,12 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+# custom login
+LOGIN_REDIRECT_URL = "/chat/"
+LOGOUT_REDIRECT_URL = "/login/"
+LOGIN_URL = "/login/"
+
+
 # Логирование
 LOGGING = {
     "version": 1,

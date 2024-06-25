@@ -131,6 +131,8 @@ def create_group_chat(request):
             group_chat.members.add(request.user)
             logger.info(f"Group chat created by user: {request.user.username}")
             return redirect("add_users_to_group", group_chat_id=group_chat.id)
+        else:
+            logger.error(f"Error creating group chat: {form.errors}")
     else:
         form = GroupChatForm()
     return render(request, "chat/create_group_chat.html", {"form": form})
