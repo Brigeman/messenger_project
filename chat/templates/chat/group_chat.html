@@ -37,11 +37,21 @@
 
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
-                document.querySelector('#chat-log').innerHTML += '<div>' + data.message + '</div>';
+                const message = data.message;
+                const author = data.author;
+                const timestamp = new Date(data.timestamp).toLocaleTimeString();
+
+                const messageElement = document.createElement('div');
+                messageElement.innerHTML = `<b>${author}</b> <i>${timestamp}</i>: ${message}`;
+                document.querySelector('#chat-log').appendChild(messageElement);
+            };
+
+            chatSocket.onopen = function(e) {
+                console.log('WebSocket connection opened.');
             };
 
             chatSocket.onclose = function(e) {
-                console.error('Chat socket closed unexpectedly');
+                console.error('Chat socket closed unexpectedly', e);
             };
 
             const chatForm = document.querySelector('#chat-form');
