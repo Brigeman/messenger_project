@@ -57,7 +57,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "type": "chat_message",
                 "message": message,
                 "author": author.username,
-                "timestamp": str(datetime.datetime.now()),
+                "timestamp": str(datetime.now()),
             },
         )
 
