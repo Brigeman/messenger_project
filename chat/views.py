@@ -18,17 +18,14 @@ logger = logging.getLogger(__name__)
 
 
 def signup(request):
+    error_message = ""
     if request.method == "POST":
         username = request.POST.get("username")
         if username:
             user_exists = User.objects.filter(username=username).exists()
             if user_exists:
                 logger.info(f"Signup attempt with existing username: {username}")
-                return render(
-                    request,
-                    "chat/signup.html",
-                    {"error_message": "Username already exists."},
-                )
+                error_message = "Username already exists."
             else:
                 user = User.objects.create(username=username)
                 logger.info(f"New user created: {username}")
@@ -39,7 +36,7 @@ def signup(request):
                 login(request, user)
                 logger.info(f"User logged in: {username}")
                 return redirect("index")
-    return render(request, "chat/signup.html")
+    return render(request, "chat/signup.html", {"error_message": error_message})
 
 
 # TODO log
