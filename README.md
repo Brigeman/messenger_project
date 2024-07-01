@@ -15,6 +15,7 @@ This is a chat messenger project built with Django and Django Channels. It suppo
 - Django
 - Django Channels
 - Redis (for channel layers)
+- Docker
 
 ## Installation
 
@@ -23,6 +24,7 @@ This is a chat messenger project built with Django and Django Channels. It suppo
    ```bash
    git clone https://github.com/Brigeman/messenger_project
    cd messenger_project
+
    ```
 
 2. **Create a virtual environment and activate it:**
@@ -69,6 +71,20 @@ This is a chat messenger project built with Django and Django Channels. It suppo
 8. **Access the application:**
 
    Open your web browser and go to `http://127.0.0.1:8000`.
+
+## Using Docker
+
+To run the project using Docker, follow these steps:
+
+Build and start the containers:
+
+'''bash
+docker-compose up --build
+'''
+
+Access the application:
+
+Open your web browser and go to http://127.0.0.1:8000.
 
 ## Usage
 
