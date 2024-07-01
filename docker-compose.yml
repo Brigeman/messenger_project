@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: daphne -p 8000 -b 0.0.0.0 messenger_project.asgi:application
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
